@@ -1,4 +1,5 @@
 /* Copyright (c) 2012-2015, 2017, The Linux Foundation. All rights reserved.
+ * Copyright (C) 2019 XiaoMi, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -1722,12 +1723,9 @@ static int qpnp_rgb_set(struct qpnp_led_data *led)
 		if (led->rgb_cfg->pwm_cfg->mode == PWM_MODE) {
 			pwm_disable(led->rgb_cfg->pwm_cfg->pwm_dev);
 			led->rgb_cfg->pwm_cfg->pwm_enabled = 0;
-					rc = qpnp_led_masked_write(led,
-			RGB_LED_EN_CTL(led->base),
-			led->rgb_cfg->enable, RGB_LED_DISABLE);
-
-			dev_err(&led->pdev->dev,
-					"zjl pwm config 333 \n");
+			rc = qpnp_led_masked_write(led,
+				RGB_LED_EN_CTL(led->base), led->rgb_cfg->enable, RGB_LED_DISABLE);
+			dev_err(&led->pdev->dev,"zjl pwm config 333 \n");
 			rc = pwm_change_mode(led->rgb_cfg->pwm_cfg->pwm_dev,
 					PM_PWM_MODE_PWM);
 			if (rc < 0) {
@@ -2520,6 +2518,7 @@ static ssize_t lut_flags_store(struct device *dev,
 	case QPNP_ID_RGB_RED:
 	case QPNP_ID_RGB_GREEN:
 	case QPNP_ID_RGB_BLUE:
+	case QPNP_ID_RGB_WHITE:
 		pwm_cfg = led->rgb_cfg->pwm_cfg;
 		break;
 	case QPNP_ID_KPDBL:
@@ -2686,7 +2685,7 @@ static void led_blink(struct qpnp_led_data *led,
 		}
 		qpnp_pwm_init(pwm_cfg, led->pdev, led->cdev.name);
 		if (led->id == QPNP_ID_RGB_RED || led->id == QPNP_ID_RGB_GREEN
-				|| led->id == QPNP_ID_RGB_BLUE || led->id == QPNP_ID_RGB_WHITE) {
+				|| led->id == QPNP_ID_RGB_BLUE || led->id == QPNP_ID_RGB_WHITE ) {
 			rc = qpnp_rgb_set(led);
 			if (rc < 0)
 				dev_err(&led->pdev->dev,
